@@ -1,0 +1,77 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Склейка изображений (Вариант 11){% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Веб-сервис склейки изображений</h1>
+        <p class="lead">Загрузите два изображения, выберите направление и получите результат с графиками распределения цветов.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Загрузка данных</div>
+                <div class="panel-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group">
+                            {{ form.image1.label }}
+                            {{ form.image1(class="form-control") }}
+                            {% for error in form.image1.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.image2.label }}
+                            {{ form.image2(class="form-control") }}
+                            {% for error in form.image2.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.direction.label }}<br>
+                            {% for subfield in form.direction %}
+                                <label class="radio-inline">
+                                    {{ subfield }} {{ subfield.label.text }}
+                                </label>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.recaptcha }}
+                            {% for error in form.recaptcha.errors %}
+                                <span style="color: red;">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+
+                        {{ form.submit(class="btn btn-primary btn-block") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if result %}
+        <div class="col-md-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">Результат</div>
+                <div class="panel-body text-center">
+                    <h3>Склеенное изображение</h3>
+                    <!-- ИСПРАВЛЕНО: используем ключ result_filename и корректный url_for -->
+                    <img src="{{ url_for('static', filename='uploads/' + result.result_filename) }}" class="img-responsive" alt="Merged Image">
+                    
+                    <hr>
+                    <h3>Графики распределения цветов (RGB)</h3>
+                    <p>Слева: Исходное 1, Центр: Исходное 2, Справа: Результат</p>
+                    <img src="data:image/png;base64,{{ result.graph_base64 }}" class="img-responsive" alt="Histograms">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
