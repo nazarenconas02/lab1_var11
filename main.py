@@ -8,19 +8,19 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import RecaptchaField
 from utils import process_images
 
-app = Flask(__name__)
+main = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  
+main.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
+main.config['UPLOAD_FOLDER'] = 'static/uploads'
+main.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024  
 
-app.config['RECAPTCHA_PUBLIC_KEY'] = '6Ld6hscsAAAAAErc3DKGtKqxtYjS7DRPZ4dT6f7y'
-app.config['RECAPTCHA_PRIVATE_KEY'] = '6Ld6hscsAAAAAJxlyG0agjtJA440k9CBQcQLzN7n'
-app.config['RECAPTCHA_USE_SSL'] = False
+main.config['RECAPTCHA_PUBLIC_KEY'] = '6Ld6hscsAAAAAErc3DKGtKqxtYjS7DRPZ4dT6f7y'
+main.config['RECAPTCHA_PRIVATE_KEY'] = '6Ld6hscsAAAAAJxlyG0agjtJA440k9CBQcQLzN7n'
+main.config['RECAPTCHA_USE_SSL'] = False
 
-bootstrap = Bootstrap(app)
+bootstrap = Bootstrap(main)
 
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(main.config['UPLOAD_FOLDER'], exist_ok=True)
 
 class MergeForm(FlaskForm):
     image1 = FileField('Первое изображение', validators=[
@@ -39,7 +39,7 @@ class MergeForm(FlaskForm):
     recaptcha = RecaptchaField()
     submit = SubmitField('Склеить и показать графики')
 
-@app.route('/', methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
 def index():
     form = MergeForm()
     result_data = None
@@ -51,8 +51,8 @@ def index():
         filename1 = "img1_" + f1.filename
         filename2 = "img2_" + f2.filename
         
-        path1 = os.path.join(app.config['UPLOAD_FOLDER'], filename1)
-        path2 = os.path.join(app.config['UPLOAD_FOLDER'], filename2)
+        path1 = os.path.join(main.config['UPLOAD_FOLDER'], filename1)
+        path2 = os.path.join(main.config['UPLOAD_FOLDER'], filename2)
         
         f1.save(path1)
         f2.save(path2)
@@ -66,4 +66,4 @@ def index():
     return render_template('index.html', form=form, result=result_data)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    main.run(debug=True)

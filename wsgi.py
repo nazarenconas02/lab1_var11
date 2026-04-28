@@ -1,6 +1,6 @@
-from app import app
+from main import main
 
-application = app
+application = main
 
 if __name__ == "__main__":
     application.run()
